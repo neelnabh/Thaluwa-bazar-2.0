@@ -278,29 +278,83 @@ export default function CreateListingPage() {
             </select>
           </div>
 
-          {/* Sample Photo Selection */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-2">
-              Select Product Photo Sample:
+          {/* Photo Upload & Preset Selection */}
+          <div className="space-y-3">
+            <label className="block text-xs font-bold text-slate-700">
+              {lang === 'as' ? 'সামগ্ৰীৰ ফটো আপলোড কৰক বা বাছক:' : 'Product Photo (Upload or Select Preset):'} *
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {PRESET_SAMPLE_IMAGES.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setImageUrl(item.url)}
-                  className={`p-1 rounded-2xl border-2 transition-all text-left overflow-hidden ${
-                    imageUrl === item.url
-                      ? 'border-emerald-600 ring-2 ring-emerald-500/20 bg-emerald-50/50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <img src={item.url} alt="" className="w-full h-20 object-cover rounded-xl" />
-                  <div className="text-[10px] font-bold text-slate-700 p-1 truncate">
-                    {item.label}
-                  </div>
-                </button>
-              ))}
+
+            {/* Current Image Preview & File Input */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <div className="relative w-28 h-28 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300 shadow-sm">
+                <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+              </div>
+
+              <div className="flex-1 space-y-2 text-center sm:text-left w-full">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <label className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm inline-flex items-center gap-1.5 transition-all">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>{lang === 'as' ? 'ডিভাইচৰ পৰা ফটো বাছক' : 'Upload from Device'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            if (event.target?.result) {
+                              setImageUrl(event.target.result as string);
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                  
+                  <span className="text-xs text-slate-400 font-medium">or pick a preset below</span>
+                </div>
+
+                <p className="text-[11px] text-slate-500">
+                  Supported formats: JPG, PNG, WEBP. You can also paste an image URL directly:
+                </p>
+
+                <input
+                  type="url"
+                  value={imageUrl.startsWith('data:') ? '' : imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full text-xs border border-slate-300 rounded-xl px-3 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Presets */}
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">
+                Quick Presets for Assam Produce:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {PRESET_SAMPLE_IMAGES.map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setImageUrl(item.url)}
+                    className={`p-1 rounded-2xl border-2 transition-all text-left overflow-hidden ${
+                      imageUrl === item.url
+                        ? 'border-emerald-600 ring-2 ring-emerald-500/20 bg-emerald-50/50'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <img src={item.url} alt="" className="w-full h-16 object-cover rounded-xl" />
+                    <div className="text-[10px] font-bold text-slate-700 p-1 truncate">
+                      {item.label}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

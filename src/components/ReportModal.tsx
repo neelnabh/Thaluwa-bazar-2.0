@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useApp } from '@/context/AppContext';
 import { ShieldAlert, CheckCircle, X } from 'lucide-react';
 
@@ -16,10 +17,15 @@ export default function ReportModal({
   onClose: () => void;
 }) {
   const { lang, currentUser } = useApp();
+  const [mounted, setMounted] = useState(false);
   const [reason, setReason] = useState('Misleading product information or fake price');
   const [details, setDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const reasons = [
     "Misleading product description or fake price",
@@ -58,9 +64,11 @@ export default function ReportModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
+      <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-3xl max-w-md w-full shadow-[0_25px_70px_rgba(0,0,0,0.5)] overflow-hidden border border-slate-200 dark:border-slate-800">
         
         <div className="bg-rose-700 text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-sm">
@@ -127,6 +135,7 @@ export default function ReportModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

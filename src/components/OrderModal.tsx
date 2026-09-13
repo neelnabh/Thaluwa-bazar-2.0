@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Product } from '@/types';
 import { useApp } from '@/context/AppContext';
@@ -15,12 +16,17 @@ export default function OrderModal({
 }) {
   const router = useRouter();
   const { lang, t, currentUser } = useApp();
+  const [mounted, setMounted] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [deliveryType, setDeliveryType] = useState<'pickup' | 'seller_delivery'>('pickup');
   const [notes, setNotes] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const title = lang === 'as' ? product.title_as : product.title_en;
   const totalPrice = product.price * quantity;
@@ -61,9 +67,11 @@ export default function OrderModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
+      <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-3xl max-w-md w-full shadow-[0_25px_70px_rgba(0,0,0,0.5)] overflow-hidden border border-slate-200 dark:border-slate-800">
         
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-700 to-teal-800 text-white p-5 flex items-center justify-between">
@@ -224,6 +232,7 @@ export default function OrderModal({
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

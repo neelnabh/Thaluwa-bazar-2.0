@@ -4,6 +4,7 @@ import { AppProvider } from '@/context/AppContext';
 import DemoSwitcher from '@/components/DemoSwitcher';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ScrollProgress from '@/components/ScrollProgress';
 
 export const metadata: Metadata = {
   title: 'Thaluwa Bazar | থলুৱা বজাৰ - Assam Hyperlocal Marketplace',
@@ -17,8 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="as">
-      <body className="bg-slate-50 font-sans text-slate-900 flex flex-col min-h-screen">
+      <body className="bg-slate-50 font-sans text-slate-900 flex flex-col min-h-screen selection:bg-emerald-200 selection:text-emerald-900">
         <AppProvider>
+          <ScrollProgress />
           <DemoSwitcher />
           <Navbar />
           <main className="flex-1">
